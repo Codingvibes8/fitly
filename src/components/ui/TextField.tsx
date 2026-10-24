@@ -5,6 +5,8 @@ import {
   StyleProp,
   ViewStyle,
   TextStyle,
+  TextInputFocusEvent,
+  TextInputSubmitEditingEvent,
 } from "react-native";
 import { cn } from "../../lib/cn";
 import { Icon } from "./Icon";
@@ -26,11 +28,16 @@ interface TextFieldProps {
   inputStyle?: StyleProp<TextStyle>;
   value?: string;
   onChangeText?: (text: string) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onFocus?: (e: any) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onBlur?: (e: any) => void;
+  onFocus?: (e: TextInputFocusEvent) => void;
+  onBlur?: (e: TextInputFocusEvent) => void;
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoComplete?: string;
+  returnKeyType?: 'default' | 'go' | 'google' | 'join' | 'next' | 'route' | 'search' | 'send' | 'yahoo' | 'done' | 'emergency-call';
+  onSubmitEditing?: (e: TextInputSubmitEditingEvent) => void;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'ascii-capable' | 'numbers-and-punctuation' | 'url' | 'number-pad' | 'name-phone-pad' | 'twitter' | 'web-search' | 'visible-password';
 }
+
+
 
 const TextField = React.forwardRef<React.ElementRef<typeof TextInput>, TextFieldProps>(
   (
@@ -49,6 +56,11 @@ const TextField = React.forwardRef<React.ElementRef<typeof TextInput>, TextField
       onFocus,
       onBlur,
       value,
+      autoCapitalize,
+      autoComplete,
+      returnKeyType,
+      onSubmitEditing,
+      keyboardType,
       ...props
     },
     ref
@@ -59,14 +71,12 @@ const TextField = React.forwardRef<React.ElementRef<typeof TextInput>, TextField
     const isPassword = type === "password";
     const secureTextEntry = isPassword && !showPassword;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleFocus = (e: any) => {
+    const handleFocus = (e: TextInputFocusEvent) => {
       setIsFocused(true);
       onFocus?.(e);
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const handleBlur = (e: any) => {
+    const handleBlur = (e: TextInputFocusEvent) => {
       setIsFocused(false);
       onBlur?.(e);
     };
@@ -76,8 +86,6 @@ const TextField = React.forwardRef<React.ElementRef<typeof TextInput>, TextField
         setShowPassword(!showPassword);
       }
     };
-
-    const restProps = props;
 
     return (
       <View className={cn(className)} style={style}>
@@ -100,18 +108,23 @@ const TextField = React.forwardRef<React.ElementRef<typeof TextInput>, TextField
             placeholder={placeholder}
             placeholderTextColor="ink-subtle"
             secureTextEntry={secureTextEntry}
-            keyboardType={type === "email" ? "email-address" : type === "number" ? "numeric" : "default"}
+            keyboardType={keyboardType ?? (type === "email" ? "email-address" : type === "number" ? "numeric" : "default")}
             value={value}
             onChangeText={onChangeText}
             onFocus={handleFocus}
             onBlur={handleBlur}
             editable={!disabled}
+            autoCapitalize={autoCapitalize}
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            autoComplete={autoComplete as any}
+            returnKeyType={returnKeyType}
+            onSubmitEditing={onSubmitEditing}
             className={cn(
               "flex-1 text-body text-ink",
               "font-jakarta"
             )}
             style={inputStyle}
-            {...restProps}
+            {...props}
           />
           {trailingAccessory ? (
             <View className="ml-3">{trailingAccessory}</View>

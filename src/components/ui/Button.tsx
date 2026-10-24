@@ -10,7 +10,7 @@ import { cn } from "../../lib/cn";
 import { Icon } from "./Icon";
 import { Text } from "./Text";
 
-export type ButtonVariant = "primary" | "secondary";
+export type ButtonVariant = "primary" | "secondary" | "ghost";
 export type ButtonSize = "md" | "sm";
 
 interface ButtonProps extends Omit<PressableProps, "children" | "style"> {
@@ -53,6 +53,7 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
     const variantStyles = {
       primary: "bg-primary text-ink",
       secondary: "bg-surface border border-border/60 text-ink",
+      ghost: "bg-transparent text-ink active:bg-surface-muted",
     };
 
     const sizeStyles = {
